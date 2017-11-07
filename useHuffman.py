@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import sys
 
 path = "sample.txt"
-imagePath = "Gray/Image01.jpg"
+# imagePath = "Gray/Image01.jpg"
+imagePath = "Color/Image01.jpg"
 h = HuffmanCoding(imagePath)
 
 output_path = h.compress()
