@@ -1,15 +1,18 @@
 from huffman import HuffmanCoding
-from skimage import io,data
-import matplotlib.pyplot as plt
-import sys
+from evaluator import *
 
-path = "sample.txt"
-# imagePath = "Gray/Image01.jpg"
-imagePath = "Color/Image01.jpg"
+
+
+#imagePath = "Color/Image01.bmp"
+#imagePath = "Color/Image02.bmp"
+#imagePath = "Gray/Image03.bmp"
+imagePath = "Gray/Image04.bmp"
 h = HuffmanCoding(imagePath)
 
 output_path = h.compress()
 print("Compressed file path: " + output_path)
-print "mapping " + str(len(h.reverse_mapping))
 decom_path = h.decompress(output_path)
 print("Decompressed file path: " + decom_path)
+
+print "Compression Rate: " + str(round(CompressionRate(imagePath, output_path), 4))
+print "SNR: " + str(round(SNR(imagePath, decom_path), 4))

@@ -3,8 +3,6 @@ import os
 from functools import total_ordering
 from skimage import io,data
 import numpy
-import matplotlib.pyplot as plt
-from skimage.color import *
 """
 Code for Huffman Coding, compression and decompression.
 Explanation at http://bhrigu.me/blog/2017/01/17/huffman-coding-python-implementation/
@@ -43,8 +41,8 @@ class HuffmanCoding:
 		frequency = {}
 		wid = img.shape[0]
 		hei = img.shape[1]
-		for x in range(0, wid - 1):
-			for y in range(0, hei - 1):
+		for x in range(0, wid):
+			for y in range(0, hei):
 				character = img[x, y]
 				if not character in frequency:
 					frequency[character] = 0
@@ -55,8 +53,8 @@ class HuffmanCoding:
 		frequency = {}
 		wid = img.shape[0]
 		hei = img.shape[1]
-		for x in range(0, wid - 1):
-			for y in range(0, hei - 1):
+		for x in range(0, wid):
+			for y in range(0, hei):
 				for z in range(0, 3):
 					character = img[x, y][z]
 					if not character in frequency:
@@ -103,8 +101,8 @@ class HuffmanCoding:
 		wid = img.shape[0]
 		hei = img.shape[1]
 		turn = 0
-		for x in range(0, wid - 1):
-			for y in range(0, hei - 1):
+		for x in range(0, wid):
+			for y in range(0, hei):
 				turn += 1
 				character = img[x, y]
 				encoded_text = encoded_text + self.codes[character]
@@ -117,14 +115,14 @@ class HuffmanCoding:
 		wid = img.shape[0]
 		hei = img.shape[1]
 		turn = 0
-		for x in range(0, wid - 1):
-			for y in range(0, hei - 1):
+		for x in range(0, wid):
+			for y in range(0, hei):
 				turn += 1
 				character1 = img[x, y][0]
 				encoded_text = encoded_text + self.codes[character1]
 				character2 = img[x, y][1]
 				encoded_text = encoded_text + self.codes[character2]
-				character3 = img[x, y][0]
+				character3 = img[x, y][2]
 				encoded_text = encoded_text + self.codes[character3]
 		return encoded_text
 
@@ -150,13 +148,10 @@ class HuffmanCoding:
 
 	def compress(self):
 		filename, file_extension = os.path.splitext(self.path)
-		output_path = filename + ".bin"
-		sourceName = filename + "_source" + ".jpg"
+		output_path = "Binary/" + filename + ".bin"
 		with open(output_path, 'wb') as output:
 			img = io.imread(self.path)
-			if img.shape[2] == 1:
-				img_gray = rgb2gray(img)
-				io.imsave(sourceName, img_gray)
+			if len(img.shape) == 2:
 				frequency = self.make_frequency_dict(img)
 				self.make_heap(frequency)
 				self.merge_nodes()
@@ -202,7 +197,7 @@ class HuffmanCoding:
 				character = self.reverse_mapping[current_code]
 				decoded_img[x, y] = character
 				y += 1
-				if y == hei - 1:
+				if y == hei:
 					x += 1
 					y = 0
 				current_code = ""
@@ -226,14 +221,14 @@ class HuffmanCoding:
 				if z == 3:
 					y += 1
 					z = 0
-				if y == hei - 1:
+				if y == hei:
 					x += 1
 					y = 0
 				current_code = ""
 		return decoded_img
 	def decompress(self, input_path):
 		filename, file_extension = os.path.splitext(self.path)
-		output_path = filename + "_decompressed" + ".jpg"
+		output_path = filename + "_decompressed" + ".bmp"
 		source_image = io.imread(self.path)
 		with open(input_path, 'rb') as file:
 			bit_string = ""
@@ -244,15 +239,15 @@ class HuffmanCoding:
 				bit_string += bits
 				byte = file.read(1)
 			encoded_text = self.remove_padding(bit_string)
-			if source_image.shape[2] == 1:
+			if len(source_image.shape) == 2:
 				decompressed_img = self.decode_text(encoded_text)
-				io.imshow(decompressed_img)
-				plt.show()
+				# io.imshow(decompressed_img)
+				# plt.show()
 				decompressed_img /= 255
 			else:
 				decompressed_img = self.decode_text_for_color_img(encoded_text)
-				io.imshow(decompressed_img)
-				plt.show()
+				# io.imshow(decompressed_img)
+				# plt.show()
 				decompressed_img /= 255
 			io.imsave(output_path, decompressed_img)
 
